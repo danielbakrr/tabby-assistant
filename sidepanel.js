@@ -80,35 +80,29 @@ async function onNewSelection(text) {
 // Ensures LanguageModel session exists and model is available.
 // Follows guidance: check availability() then create() — model may need to download.
 // See docs for availability / create lifecycle. :contentReference[oaicite:4]{index=4}
-async function ensureSession() {
+async function ensureSession(fromUserClick = false) {
   if (session) return;
-  if (!window.LanguageModel) {
-    throw new Error('LanguageModel API not available in this context. Make sure you run this in a top-level extension page and Chrome supports the Prompt API.');
-  }
 
   const avail = await LanguageModel.availability();
+
   if (avail === 'unavailable') {
-    throw new Error('On-device language model unavailable on this device/profile.');
+    throw new Error('On-device model unavailable on this device.');
   }
 
-  // If it's downloadable, the user must interact (click) to allow model download.
-  if (avail === 'downloadable') {
-    // Inform the user and request a click
-    const proceed = confirm('The on-device model must be downloaded to use the AI. Click OK to start the download (this is required once).');
-    if (!proceed) throw new Error('User cancelled model download.');
+  if ((avail === 'downloadable' || avail === 'downloading') && !fromUserClick) {
+    throw new Error('Requires a user gesture to download the model. Click "Enable AI" first.');
   }
 
-  // Create a session; you can customize expectedOutputs / inputs
   session = await LanguageModel.create({
     expectedInputs: [{ type: 'text', languages: ['en'] }],
     expectedOutputs: [{ type: 'text', languages: ['en'] }]
   });
 
-  // Optional: pre-populate with initial system prompt to make behaviour consistent
   await session.append([
-    { role: 'system', content: 'You are a helpful assistant that explains highlighted text clearly and concisely.' }
+    { role: 'system', content: 'You are a helpful assistant that explains highlighted text.' }
   ]);
 }
+
 
 // Buttons
 saveBtn.addEventListener('click', async () => {
@@ -156,3 +150,15 @@ historyList.addEventListener('click', (e) => {
     });
   }
 });
+
+const enableBtn = document.getElementById('enableAiBtn');
+
+enableBtn.addEventListener('click', async () => {
+  try {
+    await ensureSession(true); // pass true = user gesture
+    alert("AI is ready! You can now highlight text.");
+  } catch (err) {
+    alert("Error enabling AI: " + err.message);
+  }
+});
+
