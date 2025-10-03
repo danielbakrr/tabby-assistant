@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "AI Highlighter — SidePanel Assistant",
+  "version": "0.1",
+  "description": "Highlight text, get an automatic AI explanation in the side panel. Save/summarize when you want.",
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab",
+    "sidePanel",
+    "contextMenus"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "AI Highlighter"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

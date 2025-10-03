@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Highlighter — Side Panel</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Highlighter AI</h1>
+      <div id="status">Idle</div>
+    </header>
+
+    <main>
+      <section id="selectedArea">
+        <h2>Selection</h2>
+        <pre id="selectionText">No selection yet</pre>
+      </section>
+
+      <section id="responseArea">
+        <h2>AI Response</h2>
+        <div id="aiResponse">—</div>
+      </section>
+
+      <section id="controls">
+        <button id="saveBtn" disabled>Save</button>
+        <button id="summarizeBtn" disabled>Summarize</button>
+        <button id="rollbackBtn">History</button>
+      </section>
+
+      <section id="historyPanel" hidden>
+        <h2>History</h2>
+        <ul id="historyList"></ul>
+      </section>
+    </main>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
